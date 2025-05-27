@@ -27,4 +27,27 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// ✅ Ruta para iniciar sesión
+router.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const usuario = await User.findOne({ nombre: username });
+    if (!usuario) {
+      return res.status(401).json({ mensaje: "Usuario no encontrado" });
+    }
+
+    const coincide = await bcrypt.compare(password, usuario.password);
+    if (!coincide) {
+      return res.status(401).json({ mensaje: "Contraseña incorrecta" });
+    }
+
+    const token = jwt.sign({ userId: usuario._id }, "secreto123", { expiresIn: "1h" });
+
+    res.json({ token });
+  } catch (err) {
+    res.status(500).json({ mensaje: "Error al iniciar sesión", error: err.message });
+  }
+});
+
 module.exports = router;
