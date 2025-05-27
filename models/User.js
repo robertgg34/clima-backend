@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  email: {
+  email: {  // <-- CAMBIA ESTO
     type: String,
     required: true,
     unique: true,
