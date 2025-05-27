@@ -1,11 +1,10 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 const router = express.Router();
 
-// Ruta para registrar usuario
+// Ruta para registrar usuario (texto plano)
 router.post("/register", async (req, res) => {
   try {
     const { nombre, email, password } = req.body;
@@ -15,10 +14,7 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ mensaje: "El usuario ya existe" });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
-
-    const nuevoUsuario = new User({ nombre, email, password: passwordHash });
+    const nuevoUsuario = new User({ nombre, email, password });
     await nuevoUsuario.save();
 
     res.status(201).json({ mensaje: "Usuario registrado correctamente" });
@@ -27,24 +23,17 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// ✅ Ruta para iniciar sesión
+// Ruta para iniciar sesión (comparación directa)
 router.post("/login", async (req, res) => {
   try {
-    console.log("Cuerpo recibido en login:", req.body); // 👈 Esto te dice qué está llegando
-
     const { username, password } = req.body;
     const usuario = await User.findOne({ email: username });
-
-    console.log("Usuario encontrado:", usuario); // 👈 Esto te dice si encontró el usuario
 
     if (!usuario) {
       return res.status(401).json({ mensaje: "Usuario no encontrado" });
     }
-    console.log("Comparando contraseña recibida:", password);
-    console.log("Contraseña hashada guardada:", usuario.password);
 
-    const coincide = await bcrypt.compare(password, usuario.password);
-    if (!coincide) {
+    if (password !== usuario.password) {
       return res.status(401).json({ mensaje: "Contraseña incorrecta" });
     }
 
@@ -52,10 +41,8 @@ router.post("/login", async (req, res) => {
 
     res.json({ token });
   } catch (err) {
-    console.error("Error en login:", err); // 👈 Muestra cualquier error
     res.status(500).json({ mensaje: "Error al iniciar sesión", error: err.message });
   }
 });
-
 
 module.exports = router;
