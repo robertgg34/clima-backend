@@ -6,11 +6,11 @@ const authRoutes = require("./routes/auth");
 require("dotenv").config();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
-
 
 app.get("/", (req, res) => {
   res.send("Servidor funcionando correctamente");
@@ -24,11 +24,10 @@ mongoose
   .then(() => {
     console.log("✅ Conectado a MongoDB");
 
-    app.listen(3000, () => {
-      console.log("🚀 Servidor escuchando en http://localhost:3000");
+    app.listen(PORT, () => {
+      console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
     console.error("❌ Error al conectar a MongoDB:", err);
   });
-  
