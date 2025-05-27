@@ -40,6 +40,8 @@ router.post("/login", async (req, res) => {
     if (!usuario) {
       return res.status(401).json({ mensaje: "Usuario no encontrado" });
     }
+    console.log("Comparando contraseña recibida:", password);
+    console.log("Contraseña hashada guardada:", usuario.password);
 
     const coincide = await bcrypt.compare(password, usuario.password);
     if (!coincide) {
