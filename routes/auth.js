@@ -30,9 +30,13 @@ router.post("/register", async (req, res) => {
 // ✅ Ruta para iniciar sesión
 router.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    console.log("Cuerpo recibido en login:", req.body); // 👈 Esto te dice qué está llegando
 
+    const { username, password } = req.body;
     const usuario = await User.findOne({ email: username });
+
+    console.log("Usuario encontrado:", usuario); // 👈 Esto te dice si encontró el usuario
+
     if (!usuario) {
       return res.status(401).json({ mensaje: "Usuario no encontrado" });
     }
@@ -46,8 +50,10 @@ router.post("/login", async (req, res) => {
 
     res.json({ token });
   } catch (err) {
+    console.error("Error en login:", err); // 👈 Muestra cualquier error
     res.status(500).json({ mensaje: "Error al iniciar sesión", error: err.message });
   }
 });
+
 
 module.exports = router;
