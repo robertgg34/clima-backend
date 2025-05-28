@@ -30,10 +30,10 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 👀 Agregá esta línea para ver lo que recibe el backend
     console.log("📩 Datos recibidos en login:", { email, password });
 
     const usuario = await User.findOne({ email });
+    console.log("🔎 Usuario encontrado:", usuario); // << ESTA LÍNEA NUEVA
 
     if (!usuario) {
       return res.status(401).json({ mensaje: "Usuario no encontrado" });
@@ -51,6 +51,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ mensaje: "Error al iniciar sesión", error: err.message });
   }
 });
+
 
 
 module.exports = router;
